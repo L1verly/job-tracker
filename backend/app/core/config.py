@@ -1,15 +1,19 @@
 
-from pydantic import PostgresDsn, field_validator
+from functools import lru_cache
+
+from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        # Use top level .env file (one level above ./backend/)
-        env_file="../.env"
+        env_file=".env",
+        extra="ignore",
     )
     PROJECT_NAME: str = "Job Tracker"
     DATABASE_URL: PostgresDsn
 
 
-settings = Settings()
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
